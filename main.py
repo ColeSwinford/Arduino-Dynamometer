@@ -34,10 +34,22 @@ comPort = selectPort()
 arduinoData = serial.Serial(comPort, 115200)
 done = False
 
+### proof of concept for Arduino ###
+# torque and hp calculations based on data from engine curves
+def getTorque(rpm):
+    # torque = y = 16.6 + 4.25E-03x + -1.43E-06x^2
+    torque = 16.6 + (0.00425)*rpm + (-0.00000143)*(rpm**2)
+    return torque
+def getHP(rpm):
+    # hp = y = -5.99 + 9.7E-03x + -1.52E-06x^2
+    hp = -5.99 + (0.0097)*rpm + (-0.00000152)*(rpm**2)
+    return hp
+### proof of concept for Arduino ###
+
 def record():
     #### Create .txt file ####
     data = open('data_{}.txt'.format(time.strftime("%m.%d.%Y-%H.%M.%S")), 'w+')
-    data.write('Format: rpm, time(seconds)\n')
+    data.write('Format: rpm, torque(FT-LB based on engine datasheet), curveHP(HP based on engine datasheet), hp(HP calculated from torque), momentInertia(torque / angularAccel), time(seconds)\n')
 
     # global vars
     global arduinoData

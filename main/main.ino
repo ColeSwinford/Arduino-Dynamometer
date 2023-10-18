@@ -9,7 +9,8 @@ unsigned long int time;
 float angularVel0 = 0;
 float angularVel1;
 float angularAccel;
-// float torque;
+float torque;
+float curveHP;
 float hp;
 
 ////// testing for momentInertia constant
@@ -31,6 +32,20 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(hallSensor), interruptRevCounter, FALLING); //attach interrupt
 }
 
+// torque and hp calculations based on data from engine curves
+float getTorque(int rpm)
+{
+    // torque = y = 16.6 + 4.25E-03x + -1.43E-06x^2
+    float torque = 16.6 + (0.00425)*rpm + (-0.00000143)*(pow(rpm, 2));
+    return torque;
+}
+float getHP(int rpm)
+{
+    // hp = y = -5.99 + 9.7E-03x + -1.52E-06x^2
+    float hp = -5.99 + (0.0097)*rpm + (-0.00000152)*(pow(rpm, 2));
+    return hp;
+}
+
 void loop()
 {
   delay(1000);
@@ -44,6 +59,8 @@ void loop()
   // torque = angularAccel * momentInertia;  //calculate torque
 
   ////// testing for momentInertia constant
+  torque = getTorque(rpm);
+  curveHP = getHP(rpm);
   momentInertia = torque / angularAccel;
   ////// testing for momentInertia constant
   
@@ -60,13 +77,16 @@ void serialDisplay()
 {
   Serial.print(rpm);
   Serial.print(",");
-  // Serial.print(torque);
-  // Serial.print(",");
-  // Serial.print(hp);
-  // Serial.print(",");
+  Serial.print(torque);
+  Serial.print(",");
+  Serial.print(curveHP);
+  Serial.print(",");
+  Serial.print(hp);
+  Serial.print(",");
 
   ////// testing for momentInertia constant
   Serial.print(momentInertia);
+  Serial.print(",");
   ////// testing for momentInertia constant
   
   Serial.println(micros()/1000000);
