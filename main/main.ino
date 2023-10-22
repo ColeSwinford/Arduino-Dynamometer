@@ -14,8 +14,7 @@ float curveHP;
 float hp;
 
 ////// testing for momentInertia constant
-momentInertia;
-float torque = 1234;
+float momentInertia;
 ////// testing for momentInertia constant
 
 //consts
@@ -35,15 +34,20 @@ void setup()
 // torque and hp calculations based on data from engine curves
 float getTorque(int rpm)
 {
-    // torque = y = 16.6 + 4.25E-03x + -1.43E-06x^2
-    float torque = 16.6 + (0.00425)*rpm + (-0.00000143)*(pow(rpm, 2));
-    return torque;
+  // torque = y = 16.6 + 4.25E-03x + -1.43E-06x^2
+  float torque = 16.6 + (0.00425)*rpm + (-0.00000143)*(pow(rpm, 2));
+  return torque;
 }
 float getHP(int rpm)
 {
-    // hp = y = -5.99 + 9.7E-03x + -1.52E-06x^2
-    float hp = -5.99 + (0.0097)*rpm + (-0.00000152)*(pow(rpm, 2));
-    return hp;
+  // hp = y = -5.99 + 9.7E-03x + -1.52E-06x^2
+  float hp = -5.99 + (0.0097)*rpm + (-0.00000152)*(pow(rpm, 2));
+  return hp;
+}
+float getMomentInertia(float torque, float angularAccel)
+{
+  momentInertia = torque / angularAccel;
+  return momentInertia;
 }
 
 void loop()
@@ -61,10 +65,11 @@ void loop()
   ////// testing for momentInertia constant
   torque = getTorque(rpm);
   curveHP = getHP(rpm);
-  momentInertia = torque / angularAccel;
-  ////// testing for momentInertia constant
   
-  hp = (rpm * torque) / 63025  //calculate hp
+  ////// testing for momentInertia constant
+  momentInertia = getMomentInertia(torque, angularAccel);
+  
+  hp = (rpm * torque) / 63025;  //calculate hp
   rev = 0;
 
   serialDisplay();

@@ -60,7 +60,7 @@ def record():
         while arduinoData.inWaiting() == 0: # do nothing while there's no data
             pass # do nothing
         dataPacket = arduinoData.readline().decode('ascii') # read the data from the arduino
-        # print(dataPacket) # print data read from arduino to terminal
+        print(dataPacket) # print data read from arduino to terminal
         data.write(dataPacket)
         data.flush()
     done = False
